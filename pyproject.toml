@@ -1,0 +1,15 @@
+[project]
+name = "playground"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "langchain>=1.2.10",
+    "langchain-google-genai>=4.2.0",
+    "langgraph>=1.0.8",
+    "matplotlib>=3.10.8",
+    "pandas>=2.3.3",
+    "python-dotenv>=1.2.1",
+    "streamlit>=1.54.0",
+]
