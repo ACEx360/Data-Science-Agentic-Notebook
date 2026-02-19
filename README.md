@@ -14,6 +14,7 @@ A minimal working prototype of a Data Science AI Agent that combines a chat inte
 
 - Python 3.8+
 - Google Gemini API Key
+- uv
 
 ## Installation
 
@@ -22,18 +23,22 @@ A minimal working prototype of a Data Science AI Agent that combines a chat inte
    ```bash
    pip install -r requirements.txt
    ```
-3. Set up your Google API Key:
+   recommended :
+      ```bash
+   uv sync
+   ```
+4. Set up your Google API Key:
    - Create a `.env` file in the root directory.
    - Add your key:
      ```
-     GOOGLE_API_KEY=your_api_key_here
+     GOOGLE_API_KEY=ye_gareeb_ki
      ```
 
 ## Running the Application
 
 1. Run the Streamlit app:
    ```bash
-   streamlit run app.py
+   python run.py
    ```
 2. Open your browser at `http://localhost:8501`.
 
@@ -43,10 +48,4 @@ A minimal working prototype of a Data Science AI Agent that combines a chat inte
 2. **Execute**: The agent will generate Python code and execute it.
 3. **View**: The left panel shows the history of executed code and outputs.
 
-## Project Structure
 
-- `app.py`: Main Streamlit application.
-- `agent.py`: LangGraph agent utilizing Google Gemini.
-- `executor.py`: Python code execution engine handling state.
-- `database.py`: SQLite database management.
-- `requirements.txt`: Project dependencies.
