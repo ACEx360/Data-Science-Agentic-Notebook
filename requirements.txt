@@ -1,7 +1,11 @@
-streamlit
-langchain
-langchain-google-genai
-langgraph
 pandas
-matplotlib
+streamlit
+langchain-core
+scikit-learn
+plotly
+langchain
+langgraph
+langchain-openai
+langchain_experimental
+langgraph-checkpoint
 python-dotenv

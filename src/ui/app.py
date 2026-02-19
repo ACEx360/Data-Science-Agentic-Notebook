@@ -33,35 +33,28 @@ set_global_executor(st.session_state.code_executor)
 # Custom CSS for that "Premium" look
 st.markdown("""
 <style>
-    .stTextInput > div > div > input {
-        background-color: #f0f2f6;
-    }
-    .stChatMessage {
-        background-color: #f9f9f9;
+    /* Chat message container */
+    [data-testid="stChatMessage"] {
+        background-color: #000000 !important;
+        color: #ffffff !important;
         border-radius: 10px;
-        padding: 10px;
+        padding: 12px;
         margin-bottom: 10px;
     }
-    .code-cell {
-        background-color: #1e1e1e;
-        color: #d4d4d4;
-        padding: 10px;
-        border-radius: 5px;
-        font-family: 'Courier New', Courier, monospace;
-        margin-bottom: 5px;
+
+    /* Chat text */
+    [data-testid="stChatMessage"] p {
+        color: #ffffff !important;
     }
-    .output-cell {
-        background-color: #ffffff;
-        color: #000000;
-        padding: 10px;
-        border: 1px solid #e0e0e0;
-        border-left: 5px solid #007bff;
-        margin-bottom: 20px;
-        font-family: monospace;
-        white-space: pre-wrap;
+
+    /* Optional: darker chat input */
+    [data-testid="stChatInput"] textarea {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
     }
 </style>
 """, unsafe_allow_html=True)
+
 
 # Layout: 70% Notebook, 30% Chat
 col1, col2 = st.columns([7, 3])
@@ -99,6 +92,11 @@ def run_cell(index):
             cell["output"] = str(e)
             cell["status"] = "error"
 
+def delete_cell(index):
+    if 0 <= index < len(st.session_state.cells):
+        del st.session_state.cells[index]
+
+
 def add_new_cell():
     st.session_state.cells.append({"code": "", "output": "", "status": "idle", "variables": {}})
 
@@ -107,36 +105,53 @@ with col1:
     st.header("Interactive Notebook")
     
     for i, cell in enumerate(st.session_state.cells):
-        with st.container():
-            # Code Input
-            cell_code = st.text_area(f"Cell {i+1}", value=cell["code"], height=200, key=f"code_{i}")
-            
-            # Update state when text changes (Streamlit widget key handles this naturally, but we need to sync back to our list)
-            st.session_state.cells[i]["code"] = cell_code
+     with st.container():
 
-            # Controls
-            btn_col1, btn_col2 = st.columns([1, 4])
-            with btn_col1:
-                if st.button("Run", key=f"run_{i}"):
-                    run_cell(i)
-                    st.rerun()
-            with btn_col2:
-                if cell["status"] == "executed":
-                    st.success("Executed", icon="✅")
-                elif cell["status"] == "error":
-                    st.error("Error", icon="❌")
-            
-            # Output
-            if cell["output"]:
-                st.markdown(f"**Output:**")
-                st.markdown(f'<div class="output-cell">{cell["output"]}</div>', unsafe_allow_html=True)
-            
-            # Variables (Collapsed)
-            if cell.get("variables"):
-                with st.expander("Variables"):
-                    st.json(cell["variables"])
-            
-            st.markdown("---")
+        header_col1, header_col2 = st.columns([9, 1])
+
+        with header_col1:
+            st.markdown(f"### Cell {i+1}")
+
+        with header_col2:
+            if st.button("🗑️", key=f"delete_{i}"):
+                delete_cell(i)
+                st.rerun()
+
+        cell_code = st.text_area(
+            label="",
+            value=cell["code"],
+            height=200,
+            key=f"code_{i}"
+        )
+
+        st.session_state.cells[i]["code"] = cell_code
+
+        btn_col1, btn_col2 = st.columns([1, 4])
+
+        with btn_col1:
+            if st.button("Run", key=f"run_{i}"):
+                run_cell(i)
+                st.rerun()
+
+        with btn_col2:
+            if cell["status"] == "executed":
+                st.success("Executed", icon="✅")
+            elif cell["status"] == "error":
+                st.error("Error", icon="❌")
+
+        if cell["output"]:
+            st.markdown("**Output:**")
+            st.markdown(
+                f'<div class="output-cell">{cell["output"]}</div>',
+                unsafe_allow_html=True
+            )
+
+        if cell.get("variables"):
+            with st.expander("Variables"):
+                st.json(cell["variables"])
+
+        st.markdown("---")
+
 
     # Add Cell Button
     if st.button("Measured + Add Cell"):
